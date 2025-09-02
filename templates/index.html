@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Guess My Code - Terminal</title>
+    <style>
+      body {
+        background-color: #1e1e1e;
+        color: #d4d4d4;
+        font-family: "Courier New", Courier, monospace;
+        padding: 40px;
+      }
+
+      h2,
+      h3 {
+        color: #00ff00;
+      }
+
+      form {
+        margin-bottom: 20px;
+      }
+
+      textarea {
+        width: 100%;
+        height: 100px;
+        background-color: #000000;
+        color: #00ff00;
+        border: 1px solid #333;
+        padding: 10px;
+        font-size: 16px;
+        font-family: "Courier New", Courier, monospace;
+        resize: vertical;
+      }
+
+      button {
+        background-color: #000000;
+        color: #00ff00;
+        border: 1px solid #00ff00;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #00ff00;
+        color: #000000;
+      }
+
+      pre {
+        background-color: #000000;
+        color: #00ff00;
+        padding: 15px;
+        border: 1px solid #333;
+        font-size: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>$ Enter Input:</h2>
+    <form method="post">
+      <textarea
+        name="user_input"
+        placeholder="Type your input here..."
+      ></textarea
+      ><br /><br />
+      <button type="submit">Run</button>
+    </form>
+
+    {% if output %}
+    <h3>$ Output:</h3>
+    <pre>{{ output }}</pre>
+    {% endif %}
+  </body>
+</html>
