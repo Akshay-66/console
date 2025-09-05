@@ -1,73 +1,193 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta charset="utf-8" />
     <title>Guess My Code - Terminal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
+      :root {
+        --bg: #000000;
+        --fg: #00ff00;
+        --border: #003300;
+        --font: "Courier New", Courier, monospace;
+      }
+
+      html,
       body {
-        background-color: #1e1e1e;
-        color: #d4d4d4;
-        font-family: "Courier New", Courier, monospace;
-        padding: 40px;
+        height: 100%;
+        margin: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: var(--font);
       }
 
-      h2,
-      h3 {
-        color: #00ff00;
+      .wrap {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 24px 16px 32px;
       }
 
-      form {
-        margin-bottom: 20px;
+      .header {
+        white-space: pre-wrap;
+        line-height: 1.4;
+        margin-bottom: 16px;
       }
 
-      textarea {
-        width: 100%;
-        height: 100px;
-        background-color: #000000;
-        color: #00ff00;
-        border: 1px solid #333;
-        padding: 10px;
-        font-size: 16px;
-        font-family: "Courier New", Courier, monospace;
-        resize: vertical;
+      .question-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 10px;
       }
 
-      button {
-        background-color: #000000;
-        color: #00ff00;
-        border: 1px solid #00ff00;
-        padding: 10px 20px;
-        font-size: 16px;
+      .question-bar form {
+        margin: 0;
+      }
+
+      .question-bar button {
+        background: #000;
+        color: var(--fg);
+        border: 1px solid var(--fg);
+        padding: 6px 12px;
+        font-size: 14px;
         cursor: pointer;
       }
 
-      button:hover {
-        background-color: #00ff00;
-        color: #000000;
+      .question-bar button.active {
+        background: var(--fg);
+        color: #000;
+        font-weight: bold;
       }
 
-      pre {
-        background-color: #000000;
-        color: #00ff00;
-        padding: 15px;
-        border: 1px solid #333;
+      .active-label {
+        margin: 6px 0 12px;
+      }
+
+      .terminal {
+        border: 1px solid var(--border);
+        padding: 12px;
+        background: #000;
+        min-height: 60vh;
+        overflow-y: auto;
+      }
+
+      .entry {
+        margin-bottom: 10px;
+      }
+
+      .cmd-line {
+        white-space: pre-wrap;
+      }
+
+      .cmd-line .caret {
+        color: var(--fg);
+        margin-right: 8px;
+      }
+
+      .output {
+        white-space: pre-wrap;
+        margin: 4px 0 0 20px;
+      }
+
+      .prompt {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .prompt input[type="text"] {
+        flex: 1 1 auto;
+        background: #000;
+        color: var(--fg);
+        border: 1px solid var(--border);
+        padding: 8px 10px;
+        font-family: var(--font);
         font-size: 16px;
+        outline: none;
+      }
+
+      .controls {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .controls button {
+        background: #000;
+        color: var(--fg);
+        border: 1px solid var(--fg);
+        padding: 8px 14px;
+        font-size: 14px;
+        cursor: pointer;
+      }
+
+      .controls button:hover {
+        background: var(--fg);
+        color: #000;
       }
     </style>
   </head>
   <body>
-    <h2>$ Enter Input:</h2>
-    <form method="post">
-      <textarea
-        name="user_input"
-        placeholder="Type your input here..."
-      ></textarea
-      ><br /><br />
-      <button type="submit">Run</button>
-    </form>
+    <div class="wrap">
+      <div class="header">Vecna's Logic trap (c) CCE All rights reserved</div>
 
-    {% if output %}
-    <h3>$ Output:</h3>
-    <pre>{{ output }}</pre>
-    {% endif %}
+      <!-- Question Selector -->
+      <div class="question-bar">
+        {% for q in questions %}
+        <form method="post" style="display: inline">
+          <button
+            type="submit"
+            name="user_input"
+            value="switch {{ q }}"
+            class="{% if active_question == q %}active{% endif %}"
+          >
+            {{ q }}
+          </button>
+        </form>
+        {% endfor %}
+        <form method="post" style="display: inline">
+          <button type="submit" name="user_input" value="reset">Reset</button>
+        </form>
+      </div>
+
+      <!-- Active Label -->
+      <div class="active-label">
+        Active: {{ active_question if active_question else "None" }}
+      </div>
+
+      <!-- Terminal Window -->
+      <div id="terminal" class="terminal">
+        <div id="history">
+          {% for cmd, out in history %}
+          <div class="entry">
+            <div class="cmd-line"><span class="caret">&gt;</span>{{ cmd }}</div>
+            {% if out %}
+            <div class="output">{{ out }}</div>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+
+        <!-- Prompt line -->
+        <form id="cmd-form" method="post" autocomplete="off">
+          <div class="prompt">
+            <span class="caret">&gt;</span>
+            <input
+              id="cmd-input"
+              type="text"
+              name="user_input"
+              placeholder="Type here and press Enter"
+              autofocus
+              required
+            />
+          </div>
+          <div class="controls">
+            <button type="submit">Run</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </body>
 </html>
